@@ -1,28 +1,70 @@
-# Laravel PHP Framework
+#Relationship Eloquent
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+Bài viết này mình sẽ tập trung và phần relationships, và các thao tác cơ bản trên Eloquent.
+Các bảng trong cơ sở dữ liệu luôn có liên kết với nhau, việc khai báo các liên kết sẽ giúp chúng ta giảm thiểu số lượng truy vấn không cần thiết, đồng thời giúp toàn vẹn cơ sở dữ liệu.
+Laravel cũng như các framework khác nó cũng hỗ trợ các relationship như sau:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+	One to One
+	One to Many
+	Many to Many
+	Has Many Through
+	Polymorphic Relations
+	Many to Many Polymorphic Relations
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
 
-## Official Documentation
+#One to One
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+Cấu trúc như sau:
 
-## Contributing
+	- Bảng 1
+	return $this->hasOne( <Model>, <foreign_key>, <local_key>);
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+	- Bảng 2 chứa khoá ngoại là id bảng 1
+	return $this->belongsTo( <Model>, <foreign_key>, <local_key>);
 
-## Security Vulnerabilities
+#One to Many
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+	return $this->hasMany('App\Comment');
 
-## License
+	return $this->belongsTo('App\Post');
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
-#simon relationships in laravel
+
+#Many to Many
+
+	return $this->belongsToMany('App\Role');
+
+	return $this->belongsToMany('App\User');
+
+#has many through
+
+Mối quan hệ "has many through" cung cấp 1 shortcut để gọi truy cập từ xa. Ở đây ta sẽ thực hiện lấy những "posts" tại "county" thông qua "user".
+
+	return $this->hasManyThrough('App\Post', 'App\User');
+
+	return $this->hasManyThrough('App\Post', 'App\User', 'country_id', 'user_id');
+
+
+#Polymorphic Relations - Quan hệ đa hình
+
+Quan hệ đa hình là một Model này thuộc về nhiều hơn 1 Model khác, dựa vào 1 liên kết duy nhất.
+Ví dụ: 1 like có thể thuộc về 1 Post hoặc 1 Comment
+
+	return $this->morphTo();
+
+	return $this->morphMany('App\Like', 'likeable');
+
+	return $this->morphMany('App\Like', 'likeable');
+
+
+#Many To Many Polymorphic Relations
+
+Ví dụ 1 Post và 1 Video có thể chia sẻ một mối quan hệ đa hình tớ 1 Tag
+
+	return $this->morphToMany('App\Tag', 'taggable');
+
+	return $this->morphToMany('App\Tag', 'taggable');
+
+	return $this->morphToMany('App\Tag', 'taggable');
+
+	return $this->morphToMany('App\Tag', 'taggable');
+
